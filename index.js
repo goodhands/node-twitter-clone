@@ -1,18 +1,19 @@
-const { json } = require('express');
+const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
 const route = require('./routes/router');
 require('./models/client');
 
-const response = {
-    title: "MEVN Stack: Create an app with Vue.js, MongoDB & Express",
-    description: "In this tutorial we will learn how to create a large application with Vue.js, MongoDB & Express"
-}
-
+//serve our API from /v1/api/
 app.use('/v1/api/', route);
-app.use(json);
+
+//adds all request to the API to request.body
+app.use(bodyParser.json());
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.get('/', (req, res) => {
-    res.send(response)
+    res.send("We do not have a documentation yet!")
 });
 
 module.exports = app;
