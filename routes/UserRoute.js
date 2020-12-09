@@ -5,5 +5,6 @@ module.exports = (router) => {
           .get(UserController.all);
 
     router.route('/users/:username')
+            .put(UserController.update)
             .get(UserController.get);
 };
