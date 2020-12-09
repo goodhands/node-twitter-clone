@@ -1,11 +1,15 @@
 const bodyParser = require('body-parser');
 const express = require('express');
+
 const app = express();
-const route = require('./routes/router');
+const router = express.Router();
+
+const routes = require('./routes/router');
+
 require('./models/client');
 
 //serve our API from /v1/api/
-app.use('/v1/api/', route);
+app.use('/v1/api/', routes(router));
 
 //adds all request to the API to request.body
 app.use(bodyParser.json());

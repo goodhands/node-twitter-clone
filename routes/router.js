@@ -1,7 +1,6 @@
-const express = require('express');
-const UserController = require('../controllers/UserController');
-const router = express.Router();
+const users = require('./UserRoute');
 
-router.get('/name', (req, res) => UserController.add(req, res));
-
-module.exports = router;
+module.exports = (router) => {
+  users(router);
+  return router;
+};
