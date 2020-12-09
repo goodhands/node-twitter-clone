@@ -1,4 +1,5 @@
 const {User} = require('../models/User');
+const { BadRequest } = require('../services/ErrorHandling');
 
 let response = {};
 response.status = 201;
@@ -8,9 +9,7 @@ const UserController = {
     async all(req, res){
         User.find({}, (error, users) => {
             if(error){
-                response.status = 403;
-                response.message = "Server Error";
-                response.description = "An error occured and we couldn't fulfil your request";
+                new BadRequest("An error occured and we couldn't fulfil your request");
             }
 
             response.status = 200;
@@ -22,7 +21,23 @@ const UserController = {
     },
 
     async get(req, res){
+        User.find({username: req.params.username}).then(user => {
+            response.status = 200;
+            response.message = "Success";
+            response.data = user;
 
+            if(user.length == 0) {
+                response.message = "Username does not exist";
+                response.status = 404;
+                response.description = "Sorry, that user does not exist";
+            }
+        }).catch(err => {
+            response.status = 403;
+            response.message = "Server Error " + err;
+            response.description = "Sorry, we couldn't find that user";
+        })
+            
+        res.status(response.status).json(response);
     },
 
     async update(req, res){
