@@ -5,7 +5,8 @@ const {userSchema} = require('./User');
 
 const postSchema = new Schema({
     user: [userSchema],
-    content:  String,
+    body:  String,
+    picture: Array,
     metadata: {
         likes: Number,
         comments: Number
