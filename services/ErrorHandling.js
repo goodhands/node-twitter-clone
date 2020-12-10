@@ -10,13 +10,12 @@ class ErrorService extends Error{
         } if(this instanceof NotFound){
             return 404;
         }
-
         return 500;
     }
 }
 
-class BadRequest extends Error{}
-class NotFound extends Error{}
+class BadRequest extends ErrorService{}
+class NotFound extends ErrorService{}
 
 module.exports = {
     ErrorService,

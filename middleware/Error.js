@@ -1,6 +1,6 @@
 const { ErrorService } = require('../services/ErrorHandling');
 
-const handleErrors = (error, res, req, next) => {
+const handleErrors = (error, req, res, next) => {
     if(error instanceof ErrorService) {
         return res.status(error.getCode()).json({
             status: 'Error',

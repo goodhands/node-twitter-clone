@@ -1,54 +1,71 @@
 const {User} = require('../models/User');
-const { BadRequest } = require('../services/ErrorHandling');
+const { BadRequest, NotFound } = require('../services/ErrorHandling');
 
 let response = {};
-response.status = 201;
 
 const UserController = {
 
     async all(req, res){
         User.find({}, (error, users) => {
             if(error){
-                new BadRequest("An error occured and we couldn't fulfil your request");
+                throw new BadRequest("An error occured and we couldn't fulfil your request");
             }
 
             response.status = 200;
             response.message = "Success";
             response.data = users;
+
+            res.status(response.status).json(response);
         })
 
-        res.status(response.status).json(response);
     },
 
-    async get(req, res){
+    async get(req, res, next){
         User.find({username: req.params.username}).then(user => {
-            response.status = 200;
-            response.message = "Success";
-            response.data = user;
 
-            if(user.length == 0) {
-                response.message = "Username does not exist";
-                response.status = 404;
-                response.description = "Sorry, that user does not exist";
+            if(user.length == 0 || !user) {
+                throw new NotFound("Sorry, that user does not exist");
+            }else{
+                response.status = 200;
+                response.message = "Success";
+                response.data = user;
+
+                res.status(response.status).json(response);
             }
+
         }).catch(err => {
-            response.status = 403;
-            response.message = "Server Error " + err;
-            response.description = "Sorry, we couldn't find that user";
+            next(err);
         })
-            
-        res.status(response.status).json(response);
     },
 
     async update(req, res){
+        const user = new User({
+            name: req.body.name, 
+            email: req.body.email, 
+            username: req.body.email, 
+            password: req.body.password,
+            picture: req.file
+        }).then(response => {
 
+        }).catch(error => {
+
+        });
     },
 
-    async register(req, res){
-        const user = new User({name: "Samuel", email: "320"});
-        await user.save();
-        
-        res.status(201).json(user);
+    async register(req, res, next){
+
+        const user = new User({
+            name: req.body.name,
+            email: req.body.email,
+            username: req.body.username,
+            picture: req.file.filename
+        });
+
+        user.save().then(response => {
+            res.status(201).json(response); 
+        }).catch(err => {
+            next(err);
+        })
     },
 
     async login(req, res){
